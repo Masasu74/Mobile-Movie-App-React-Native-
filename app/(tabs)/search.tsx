@@ -8,7 +8,7 @@ import useFetch from "@/services/useFetch";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Image, Text, View } from "react-native";
 const Search = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const {
     data: movies,
@@ -16,27 +16,30 @@ const Search = () => {
     error,
     refetch: loadMovies,
     reset,
-  } = useFetch(() => fetchMovies({
-    query: searchQuery
-  }), false);
+  } = useFetch(
+    () =>
+      fetchMovies({
+        query: searchQuery,
+      }),
+    false
+  );
 
   useEffect(() => {
-   
-
     const timeoutId = setTimeout(async () => {
       if (searchQuery.trim()) {
         await loadMovies();
-        if(movies?.length>0 && movies?.[0]){
-          await updateSearchCount(searchQuery,movies[0]);
-        }
-         
-      }
-      else {
+      } else {
         reset();
       }
     }, 500);
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
+
+  useEffect(()=>{
+if (movies?.length > 0 && movies?.[0]) {
+           updateSearchCount(searchQuery, movies[0]);
+        }
+  },[movies])
 
   return (
     <View className="flex-1 bg-primary">
@@ -70,7 +73,11 @@ const Search = () => {
               />
             </View>
             {loading && (
-              <ActivityIndicator size="large" color="#0000ff" className="my-3" />
+              <ActivityIndicator
+                size="large"
+                color="#0000ff"
+                className="my-3"
+              />
             )}
             {error && (
               <Text className="text-red-500 px-5 my-3">
@@ -79,7 +86,7 @@ const Search = () => {
             )}
             {!loading && !error && searchQuery.trim() && movies?.length > 0 && (
               <Text className="text-xl text-white font-bold">
-                Search Results for {''}
+                Search Results for {""}
                 <Text className="text-accent">{searchQuery}</Text>
               </Text>
             )}
@@ -89,7 +96,7 @@ const Search = () => {
           !loading && !error ? (
             <View className="mt-10 px-5">
               <Text className="text-center text-gray-500">
-               {searchQuery.trim() ? 'No results found' : 'Search for a movie'}
+                {searchQuery.trim() ? "No results found" : "Search for a movie"}
               </Text>
             </View>
           ) : null
